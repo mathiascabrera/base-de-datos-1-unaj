@@ -1,0 +1,484 @@
+
+DROP DATABASE IF EXISTS Facultad;
+
+CREATE DATABASE Facultad;
+
+USE Facultad;
+
+/*------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Materia) */
+/*------------------------------------------------------*/
+CREATE TABLE Materia
+(
+    /* Atributo Caracteristico de la Tabla */
+    idMateria INT NOT NULL,
+    descripcion VARCHAR(50) NOT NULL,
+    descripcionCorta VARCHAR(10) NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idMateria),
+
+    /* Clave Unica (UK) */
+    UNIQUE (descripcion),
+    UNIQUE (descripcionCorta),
+	
+    /* Restriccion propia del atributo caracteristico (CK) */
+    CHECK (idMateria > 0)
+);
+
+INSERT
+    INTO
+        Materia
+    VALUES
+(2218, 'Sistemas y Organizaciones', 'Sist-Org'),
+(3242, 'Investigacion Operativa', 'Inv-Ope');
+
+/*----------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Curso) */
+/*----------------------------------------------------*/
+CREATE TABLE Curso
+(
+    /* Atributo Caracteristico de la Tabla */
+    idCurso INT NOT NULL,
+    denominacion VARCHAR(10) NOT NULL,
+    descripcion VARCHAR(50) NOT NULL,
+    idCuatrimestre INT NOT NULL,
+    cuatrimestreDescripcion VARCHAR(50) NOT NULL,
+    cuatrimestreDescripcionCorta VARCHAR(10) NOT NULL,
+	idDiaSemana INT NOT NULL,
+    diaSemanaDescripcion ENUM ('Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo') NOT NULL,
+    diaSemanaDescripcionCorta ENUM ('Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom') NOT NULL,
+    diaSemanaHoraDesde TIME NOT NULL,
+    diaSemanaHoraHasta TIME NOT NULL,
+    idTurno INT NOT NULL,
+    turnoDescripcion ENUM ('Manana', 'Tarde', 'Noche') NOT NULL,
+    turnoDescripcionCorta ENUM ('M', 'T', 'N') NOT NULL,
+
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+    idMateria INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idCurso, idDiaSemana),
+
+    /* Restriccion propia del atributo caracteristico (CK) */
+    CHECK (idCurso > 0),
+    CHECK (idCuatrimestre > 0),
+    CHECK (idDiaSemana > 0),
+    CHECK (idTurno > 0),
+
+    /* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idMateria) REFERENCES Materia (idMateria)
+);
+
+INSERT
+    INTO
+        Curso 
+    VALUES 
+(125, 'K1032', 'Curso Sistemas 1032', 1, 'Primer Cuatrimestre', '1 Cuatri', 1, 'Lunes', 'Lun', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(125, 'K1032', 'Curso Sistemas 1032', 1, 'Primer Cuatrimestre', '1 Cuatri', 5, 'Viernes', 'Vie', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(141, 'K1035', 'Curso Sistemas 1035', 1, 'Primer Cuatrimestre', '1 Cuatri', 1, 'Lunes', 'Lun', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(141, 'K1035', 'Curso Sistemas 1035', 1, 'Primer Cuatrimestre', '1 Cuatri', 3, 'Miercoles', 'Mie', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(155, 'K1037', 'Curso Sistemas 1037', 1, 'Primer Cuatrimestre', '1 Cuatri', 2, 'Martes', 'Mar', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(155, 'K1037', 'Curso Sistemas 1037', 1, 'Primer Cuatrimestre', '1 Cuatri', 4, 'Jueves', 'Jue', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 2218),
+(425, 'K4048', 'Curso Sistemas 4048', 1, 'Primer Cuatrimestre', '1 Cuatri', 6, 'Sabado', 'Sab', STR_TO_DATE('8:00', '%H:%i'), STR_TO_DATE('14:00', '%H:%i'), 1, 'Manana', 'M', 3242),
+(441, 'K4050', 'Curso Sistemas 4050', 1, 'Primer Cuatrimestre', '1 Cuatri', 1, 'Lunes', 'Lun', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 3242),
+(441, 'K4050', 'Curso Sistemas 4050', 1, 'Primer Cuatrimestre', '1 Cuatri', 3, 'Miercoles', 'Mie', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 3242),
+(465, 'K4051', 'Curso Sistemas 4051', 1, 'Primer Cuatrimestre', '1 Cuatri', 4, 'Jueves', 'Jue', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 3242),
+(465, 'K4051', 'Curso Sistemas 4051', 1, 'Primer Cuatrimestre', '1 Cuatri', 5, 'Viernes', 'Vie', STR_TO_DATE('19:00', '%H:%i'), STR_TO_DATE('22:00', '%H:%i'), 3, 'Noche', 'N', 3242);
+
+/*-----------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Examen) */
+/*-----------------------------------------------------*/
+CREATE TABLE Examen
+(
+    /* Atributo Caracteristico de la Tabla */
+    idExamen INT NOT NULL,
+    idTipoExamen INT NOT NULL,
+    descripcion VARCHAR(100) NOT NULL,
+    descripcionCorta VARCHAR(30) NOT NULL,
+    tema VARCHAR(200),
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idExamen),
+
+    /* Clave Unica (UK) */
+    UNIQUE KEY (tema),
+
+    /* Restriccion propia del atributo caracteristico (CK) */
+    CHECK (idExamen > 0),
+    CHECK (idTipoExamen > 0)
+);
+
+INSERT 
+    INTO 
+        Examen 
+    VALUES 
+(132, 32, 'Primer Parcial', '1 Parcial', 'Teoria de Sistemas/Enfoque Sistemico, la Organizacion como Enfoque de Sistemas y sus Estructuras'),
+(150, 50, 'Primer Recuperatorio - (Primer Parcial)', '1 Recupe - (1 Parcial)', NULL),
+(160, 60, 'Segundo Recuperatorio - (Primer Parcial)', '2 Recupe - (1 Parcial)', NULL),
+(133, 33, 'Segundo Parcial', '2 Parcial', 'Subsistemas, Funciones Administrativas, Sistemas de Informacion (SI), los SI asociados a los Procesos Organizacionales'),
+(151, 51, 'Primer Recuperatorio - (Segundo Parcial)', '1 Recupe - (2 Parcial)', NULL),
+(161, 61, 'Segundo Recuperatorio - (Segundo Parcial)', '2 Recupe - (2 Parcial)', NULL),
+(454, 32, 'Primer Parcial', '1 Parcial', 'Simplex, Dual, Transporte, Asignacion'),
+(456, 50, 'Primer Recuperatorio - (Primer Parcial)', '1 Recupe - (1 Parcial)', NULL),
+(460, 60, 'Segundo Recuperatorio - (Primer Parcial)', '2 Recupe - (1 Parcial)', NULL),
+(455, 33, 'Segundo Parcial', '2 Parcial', 'CPM, PERT, Teoria de decision y Teoria de Juegos'),
+(457, 51, 'Primer Recuperatorio - (Segundo Parcial)', '1 Recupe - (2 Parcial)', NULL),
+(461, 61, 'Segundo Recuperatorio - (Segundo Parcial)', '2 Recupe - (2 Parcial)', NULL);
+
+/*-------------------------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Examen_ExamenRecuperatorio) */
+/*-------------------------------------------------------------------------*/
+CREATE TABLE Examen_ExamenRecuperatorio
+(
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+    idExamen INT NOT NULL,
+    idExamenRecuperatorio INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idExamen, idExamenRecuperatorio),
+	
+    /* Clave Unica (UK) */
+    UNIQUE KEY (idExamenRecuperatorio),
+
+    /* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idExamen) REFERENCES Examen (idExamen),
+    FOREIGN KEY (idExamenRecuperatorio) REFERENCES Examen (idExamen)
+);
+
+INSERT 
+    INTO 
+        Examen_ExamenRecuperatorio
+    VALUES 
+(132, 150),
+(132, 160),
+(133, 151),
+(133, 161),
+(454, 456),
+(454, 460),
+(455, 457),
+(455, 461);
+
+/*-----------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Curso_Examen) */
+/*-----------------------------------------------------------*/
+CREATE TABLE Curso_Examen
+(
+    /* Atributo Caracteristico de la Tabla */
+    fechaExamen DATE NOT NULL,
+
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+    idCurso INT NOT NULL,
+    idExamen INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idCurso, idExamen),
+
+    /* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idCurso) REFERENCES Curso (idCurso),
+    FOREIGN KEY (idExamen) REFERENCES Examen (idExamen)
+);
+
+INSERT
+    INTO 
+        Curso_Examen 
+    VALUES 
+(STR_TO_DATE('27/04/2020', '%d/%m/%Y'), 125, 132),
+(STR_TO_DATE('18/05/2020', '%d/%m/%Y'), 125, 133),
+(STR_TO_DATE('08/06/2020', '%d/%m/%Y'), 125, 150),
+(STR_TO_DATE('22/06/2020', '%d/%m/%Y'), 125, 151),
+(STR_TO_DATE('06/07/2020', '%d/%m/%Y'), 125, 160),
+(STR_TO_DATE('13/07/2020', '%d/%m/%Y'), 125, 161),
+(STR_TO_DATE('25/04/2020', '%d/%m/%Y'), 141, 132),
+(STR_TO_DATE('16/05/2020', '%d/%m/%Y'), 141, 133),
+(STR_TO_DATE('06/06/2020', '%d/%m/%Y'), 141, 150),
+(STR_TO_DATE('20/06/2020', '%d/%m/%Y'), 141, 151),
+(STR_TO_DATE('04/07/2020', '%d/%m/%Y'), 141, 160),
+(STR_TO_DATE('11/07/2020', '%d/%m/%Y'), 141, 161),
+(STR_TO_DATE('26/04/2020', '%d/%m/%Y'), 155, 132),
+(STR_TO_DATE('17/05/2020', '%d/%m/%Y'), 155, 133),
+(STR_TO_DATE('07/06/2020', '%d/%m/%Y'), 155, 150),
+(STR_TO_DATE('21/06/2020', '%d/%m/%Y'), 155, 151),
+(STR_TO_DATE('05/07/2020', '%d/%m/%Y'), 155, 160),
+(STR_TO_DATE('12/07/2020', '%d/%m/%Y'), 155, 161),
+(STR_TO_DATE('28/04/2020', '%d/%m/%Y'), 425, 454),
+(STR_TO_DATE('19/05/2020', '%d/%m/%Y'), 425, 455),
+(STR_TO_DATE('09/06/2020', '%d/%m/%Y'), 425, 456),
+(STR_TO_DATE('23/06/2020', '%d/%m/%Y'), 425, 457),
+(STR_TO_DATE('07/07/2020', '%d/%m/%Y'), 425, 460),
+(STR_TO_DATE('14/07/2020', '%d/%m/%Y'), 425, 461),
+(STR_TO_DATE('25/04/2020', '%d/%m/%Y'), 441, 454),
+(STR_TO_DATE('16/05/2020', '%d/%m/%Y'), 441, 455),
+(STR_TO_DATE('06/06/2020', '%d/%m/%Y'), 441, 456),
+(STR_TO_DATE('20/06/2020', '%d/%m/%Y'), 441, 457),
+(STR_TO_DATE('04/07/2020', '%d/%m/%Y'), 441, 460),
+(STR_TO_DATE('11/07/2020', '%d/%m/%Y'), 441, 461),
+(STR_TO_DATE('27/04/2020', '%d/%m/%Y'), 465, 454),
+(STR_TO_DATE('18/05/2020', '%d/%m/%Y'), 465, 455),
+(STR_TO_DATE('08/06/2020', '%d/%m/%Y'), 465, 456),
+(STR_TO_DATE('22/06/2020', '%d/%m/%Y'), 465, 457),
+(STR_TO_DATE('06/07/2020', '%d/%m/%Y'), 465, 460),
+(STR_TO_DATE('13/07/2020', '%d/%m/%Y'), 465, 461);
+
+/*-----------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Alumno) */
+/*-----------------------------------------------------*/
+CREATE TABLE Alumno
+(
+    /* Atributo Caracteristico de la Tabla */
+    idAlumno INT NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
+    dni VARCHAR(15) NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idAlumno),
+
+    /* Clave Unica (UK) */
+    UNIQUE KEY (dni),
+
+    /* Restriccion propia del atributo caracteristico (CK) */
+    CHECK (idAlumno > 0)
+);
+
+INSERT
+    INTO 
+        Alumno 
+    VALUES 
+(126, 'Aldana', 'Guillermo Nicolas', '36809667'),
+(26, 'Alvarez', 'Yesica Soledad', '37882598'),
+(45, 'Basteiro', 'Maria Mercedes', '35780373'),
+(654, 'Belohlavek', 'Daniel', '39098582'),
+(231, 'Costantino', 'Federico', '38907168'),
+(456, 'Diaz', 'Nicolas Alejandro', '37607418'),
+(356, 'Eguibar', 'Matias', '35937834'),
+(123, 'Franco', 'Carlos Alberto', '94403335'),
+(471, 'Gonzalez Rosas', 'Maria Isabel', '32954241'),
+(311, 'Luna', 'Jose', '37191155'),
+(276, 'Mariano', 'Jonathan J.', '35187906'),
+(876, 'Nakamura', 'Federico Kenji', '34960325'),
+(234, 'Oshiro', 'Alejandro', '36087456'),
+(35, 'Salvador', 'Emanuel', '37899250'),
+(221, 'Salvatore', 'Lucio', '38786253'),
+(67, 'Trillo', 'Agostina Paula', '37178098');
+
+/*---------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (AlumnoMail) */
+/*---------------------------------------------------------*/
+CREATE TABLE Alumno_Mail
+(
+    /* Atributo Caracteristico de la Tabla */
+    mail VARCHAR(100) NOT NULL,
+	
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+    idAlumno INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idAlumno, mail),
+
+    /* Clave Unica (UK) */
+    UNIQUE KEY (mail),
+
+	/* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idAlumno) REFERENCES Alumno (idAlumno)	
+);
+
+INSERT
+    INTO 
+        Alumno_Mail
+    VALUES 
+('galdana@gmail.com', 126),
+('galdana@hotmail.com', 126),
+('alvarezol@live.com.ar', 26),
+('mbasteiro@hotmail.com', 45),
+('daniel.b@gmail.com', 654),
+('daniel.b@live.com.ar', 654), 
+('daniel.b@hotmail.com', 654),
+('f.costanti@gmail.com', 231),
+('nadiaz1993@hotmail.com', 456),
+('nadiaz1993@gmail.com', 456),
+('matiasegui@hotmail.com', 356),
+('ca.fran@gmail.com', 123),
+('ca.fran@hotmail.com', 123),
+('igrosas@gmail.com', 471),
+('jiluna@hotmail.com', 311),
+('jonamari@hotmail.com', 276), 
+('jonamari@yahoo.com.ar', 276), 
+('jonamari@gmail.com', 276),
+('fe.naka@gmail.com', 876),
+('aleoshi@gmail.com', 234), 
+('aleoshi@live.com.ar', 35),
+('ema.salvador@hotmail.com', 35),
+('luchosalva@yahoo.com.ar', 221),
+('atrillo.95@gmail.com', 67), 
+('atrillo.95@hotmail.com', 67), 
+('atrillo.95@yahoo.com.ar', 67);
+
+/*-----------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Curso_Alumno) */
+/*-----------------------------------------------------------*/
+CREATE TABLE Curso_Alumno
+(
+    /* Atributo Caracteristico de la Tabla */
+	fechaDesde DATE NOT NULL,
+	fechaHasta DATE,
+
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+	idCurso INT NOT NULL,
+    idAlumno INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idCurso, idAlumno, fechaDesde),
+
+    /* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idCurso) REFERENCES Curso (idCurso),
+    FOREIGN KEY (idAlumno) REFERENCES Alumno (idAlumno)
+);
+
+INSERT
+    INTO 
+        Curso_Alumno
+    VALUES 
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 125, 126),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), STR_TO_DATE('10/05/2020', '%d/%m/%Y'), 465, 126),
+(STR_TO_DATE('11/05/2020', '%d/%m/%Y'), NULL, 425, 126),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 141, 26),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 441, 26),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 141, 45),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 441, 45),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 125, 654),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 465, 654),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 231),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 231),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 141, 456),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), STR_TO_DATE('08/05/2020', '%d/%m/%Y'), 441, 456),
+(STR_TO_DATE('09/05/2020', '%d/%m/%Y'), NULL, 425, 456),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 356),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 356),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 125, 123),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 465, 123),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 141, 471),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 441, 471),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 141, 311),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 441, 311),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 276),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 276),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 125, 876),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 465, 876),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 234),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 234),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 35),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 35),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 125, 221),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 465, 221),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 155, 67),
+(STR_TO_DATE('13/04/2020', '%d/%m/%Y'), NULL, 425, 67);
+
+/*------------------------------------------------------------------*/
+/* Crear y cargar unas instancias de la tabla (Curso_Alumno_Examen) */
+/*------------------------------------------------------------------*/
+CREATE TABLE Curso_Alumno_Examen
+(
+    /* Atributo Caracteristico de la Tabla */
+    nota INT NOT NULL,
+
+    /* Atributo Caracteristico de la Tabla, referenciado con otra Tabla */
+    idCurso INT NOT NULL,
+    idAlumno INT NOT NULL,
+    idExamen INT NOT NULL,
+
+    /* Clave Primaria (PK) */
+    PRIMARY KEY (idCurso, idAlumno, idExamen),
+
+	/* Restriccion propia del atributo caracteristico (CK) */
+    CHECK (nota >= 0 AND nota <= 10),
+
+    /* Clave Lejana del Atributo Caracteristico de la Tabla, referenciado con otra Tabla (FK) */
+    FOREIGN KEY (idCurso, idAlumno) REFERENCES Curso_Alumno (idCurso, idAlumno),
+    FOREIGN KEY (idCurso, idExamen) REFERENCES Curso_Examen (idCurso, idExamen)
+);
+
+INSERT
+    INTO 
+        Curso_Alumno_Examen 
+    VALUES 
+(7, 125, 126, 132),
+(5, 125, 126, 133),
+(4, 465, 126, 454),
+(4, 425, 126, 455),
+(8, 141, 26, 132),
+(7, 141, 26, 133),
+(9, 441, 26, 454),
+(7, 441, 26, 455),
+(9, 141, 45, 132),
+(7, 141, 45, 133),
+(2, 441, 45, 454),
+(2, 441, 45, 455),
+(9, 441, 45, 456),
+(2, 441, 45, 457),
+(8, 441, 45, 461),
+(2, 125, 654, 132),
+(6, 125, 654, 133),
+(8, 125, 654, 150),
+(5, 465, 654, 454),
+(2, 465, 654, 455),
+(7, 465, 654, 457),
+(4, 155, 231, 132),
+(4, 155, 231, 133),
+(2, 425, 231, 454),
+(6, 425, 231, 455),
+(8, 425, 231, 456),
+(6, 141, 456, 132),
+(8, 141, 456, 133),
+(6, 441, 456, 454),
+(8, 441, 456, 455),
+(5, 155, 356, 132),
+(2, 155, 356, 133),
+(7, 155, 356, 151),
+(8, 425, 356, 454),
+(8, 425, 356, 455),
+(4, 125, 123, 132),
+(2, 125, 123, 133),
+(5, 125, 123, 151),
+(4, 465, 123, 454),
+(7, 465, 123, 455),
+(2, 141, 471, 132),
+(2, 141, 471, 133),
+(6, 141, 471, 150),
+(8, 141, 471, 151),
+(5, 441, 471, 454),
+(6, 441, 471, 455),
+(5, 141, 311, 132),
+(6, 141, 311, 133),
+(2, 441, 311, 454),
+(2, 441, 311, 455),
+(6, 441, 311, 456),
+(8, 441, 311, 457),
+(2, 155, 276, 132),
+(8, 155, 276, 133),
+(7, 155, 276, 150),
+(6, 425, 276, 454),
+(6, 425, 276, 455),
+(8, 125, 876, 132),
+(2, 125, 876, 133),
+(7, 125, 876, 151),
+(10, 465, 876, 454),
+(8, 465, 876, 455),
+(10, 155, 234, 132),
+(8, 155, 234, 133),
+(8, 425, 234, 454),
+(7, 425, 234, 455),
+(5, 155, 35, 132),
+(7, 155, 35, 133),
+(4, 425, 35, 454),
+(4, 425, 35, 455),
+(5, 125, 221, 132),
+(6, 125, 221, 133),
+(2, 465, 221, 454),
+(8, 465, 221, 455),
+(8, 465, 221, 456),
+(4, 155, 67, 132),
+(7, 155, 67, 133),
+(7, 425, 67, 454),
+(2, 425, 67, 455),
+(5, 425, 67, 457);

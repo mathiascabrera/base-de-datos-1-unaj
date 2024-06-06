@@ -1,0 +1,41 @@
+
+USE Facultad;
+
+SELECT
+    D.idCurso        'Curso',
+    D.apellido       'Apellido',
+    D.nombre        'Nombre',
+    D.idExamen     'Examen',
+    D.nota             'Nota'
+FROM
+    Materia A
+    INNER JOIN Curso B
+    ON (A.idMateria = B.idMateria)
+    INNER JOIN Examen C
+    ON (B.idCurso = C.idCurso)
+    INNER JOIN Alumno D
+    ON ((B.idCurso = D.idCurso) AND (C.idExamen = D.idExamen))
+WHERE
+    A.descripcion = 'Investigacion Operativa'
+    AND
+    (
+        (B.idCurso, B.idDiaSemana)
+        IN
+        (
+            SELECT
+                E.idCurso,
+                MIN(E.idDiaSemana)
+            FROM
+                Curso E
+            GROUP BY
+                E.idCurso
+        )
+    )
+    AND
+    C.descripcion = 'Primer Parcial'
+    AND
+    D.nota < 6
+ORDER BY
+    D.idCurso,
+    D.apellido,
+    D.nombre;

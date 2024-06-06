@@ -1,0 +1,393 @@
+
+USE facultad;
+
+/*-----------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Materia) */
+/*-----------------------------------------------------------------------*/
+SELECT 
+    A.idMateria        'Materia',
+    A.descripcion      'Descripcion',
+    A.descripcionCorta 'Descripcion Corta'
+FROM 
+    Materia A
+ORDER BY
+    A.descripcion;
+
+/*---------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Curso) */
+/*---------------------------------------------------------------------*/
+SELECT 
+    A.idCurso                      'Curso',
+    A.denominacion                 'Curso Denominacion',
+    A.descripcion                  'Curso Descripcion',
+    A.idCuatrimestre               'Cuatrimestre',
+    A.cuatrimestreDescripcion      'Cuatrimestre',
+    A.cuatrimestreDescripcionCorta 'Cuatrimestre',
+    A.diaSemanaDescripcion         'Dia Semana',
+    A.diaSemanaDescripcionCorta    'Dia Semana',
+    A.diaSemanaHoraDesde           'Hora Desde',
+    A.diaSemanaHoraHasta           'Hora Hasta',
+    A.idTurno                      'Turno',
+    A.turnoDescripcion             'Turno',
+    A.turnoDescripcionCorta        'Turno',
+    A.idMateria                    'Referencia Materia'
+FROM
+    Curso A
+ORDER BY
+    A.descripcion;
+
+/*----------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Examen) */
+/*----------------------------------------------------------------------*/
+SELECT 
+    A.idExamen         'Examen',
+    A.descripcion      'Descripcion',
+    A.descripcionCorta 'Descripcion Corta',
+    A.tema             'Tema'
+FROM
+    Examen A
+ORDER BY
+    A.descripcion;
+	
+/*------------------------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Examen_ExamenRecuperatorio) */
+/*------------------------------------------------------------------------------------------*/
+SELECT 
+    A.idExamen	            'Examen',
+    A.idExamenRecuperatorio 'ExamenRecuperatorio'
+FROM
+    Examen_ExamenRecuperatorio A
+ORDER BY
+    A.idExamen,
+	A.idExamenRecuperatorio;
+	
+/*----------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Curso_Examen) */
+/*----------------------------------------------------------------------------*/
+SELECT 
+    A.fechaExamen 'Fecha',
+    A.idCurso     'Curso',
+    A.idExamen    'Examen'
+FROM 
+    Curso_Examen A
+ORDER BY
+    A.idCurso,
+    A.idExamen;
+	
+/*-------------------------------------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Alumno), ordenados por apellido y nombre */
+/*-------------------------------------------------------------------------------------------------------*/
+SELECT 
+    A.idAlumno 'Alumno',
+    A.apellido 'Apellido',
+    A.nombre   'Nombre',
+    A.dni      'DNI'
+FROM 
+    Alumno A
+ORDER by
+    A.apellido,
+    A.nombre;
+	
+/*----------------------------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Alumno), ordenados por idAlumno */
+/*----------------------------------------------------------------------------------------------*/
+SELECT 
+    A.mail     'Mail',
+    A.idAlumno 'Alumno'	
+FROM 
+    Alumno_Mail A
+ORDER by
+    A.idAlumno;
+
+/*--------------------------------------------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Curso_Alumno), ordenados por idCurso y idAlumno */
+/*--------------------------------------------------------------------------------------------------------------*/
+SELECT 
+    A.fechaDesde 'FechaDesde',
+    A.fechaHasta 'FechaHasta',
+    A.idCurso    'Referencia Curso',
+    A.idAlumno   'Referencia Alumno'
+FROM 
+    Curso_Alumno A
+ORDER by
+    A.idCurso,
+    A.idAlumno;
+	
+/*--------------------------------------------------------------------------------------------------------------------*/
+/* Seleccionar todos los Atributos Caracteristicos de la tabla (Curso_Alumno_Examen), ordenados por apellido y nombre */
+/*--------------------------------------------------------------------------------------------------------------------*/
+SELECT 
+    A.nota     'Nota',
+    A.idCurso  'Referencia Curso',
+    A.idAlumno 'Referencia Alumno',
+    A.idExamen 'Referencia Examen'
+FROM 
+    Curso_Alumno_Examen A
+ORDER by
+    A.idCurso,
+    A.idAlumno,
+    A.idExamen;
+
+/*----------------------------------------------------------------------------*/
+/* Obtiene los datos de la tabla Curso y los datos de sus tablas relacionadas */
+/*----------------------------------------------------------------------------*/
+SELECT
+    A.denominacion                 'Curso', 
+    A.diaSemanaDescripcionCorta    'Dia', 
+    A.diaSemanaHoraDesde           'Hora Desde', 
+    A.diaSemanaHoraHasta           'Hora Hasta',
+    A.cuatrimestreDescripcionCorta 'Cuatrimestre', 
+    B.descripcion                  'Materia',
+    A.turnoDescripcionCorta        'Turno'
+FROM
+    Curso A 
+       INNER JOIN Materia B
+       ON
+       (
+           A.idMateria = B.idMateria
+       )
+ORDER BY
+    A.denominacion;
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* Informar de cada curso su denominacion y los alumnos desaprobados en el primer parcial de Investigacion Operativa */
+/*-------------------------------------------------------------------------------------------------------------------*/
+SELECT DISTINCT
+    A.denominacion 'Curso', 
+    D.apellido     'Apellido',
+    D.nombre       'Nombre'
+FROM 
+    Curso A
+    INNER JOIN Curso_Examen B
+    ON
+    (
+       A.idCurso = B.idCurso
+    )
+    INNER JOIN Curso_Alumno_Examen C
+    ON
+    (
+        B.idCurso = C.idCurso
+        AND
+        B.idExamen = C.idExamen
+    )
+    INNER JOIN Alumno D
+    ON
+    (
+       C.idAlumno = D.idAlumno
+    )
+WHERE
+    B.idExamen IN (454)
+    AND
+    C.nota < 6
+ORDER BY
+    A.denominacion, 
+    D.apellido,
+    D.nombre;
+
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
+/* Informar de cada curso los alumnos desaprobados en el primer parcial (para Sistemas y Organizaciones, y para Investigacion Operativa) */
+/*---------------------------------------------------------------------------------------------------------------------------------------*/
+SELECT DISTINCT
+    A.idCurso  'Curso', 
+    D.apellido 'Apellido',
+    D.nombre   'Nombre'
+FROM 
+    Curso A
+    INNER JOIN Curso_Examen B
+    ON
+    (
+       A.idCurso = B.idCurso
+    )
+    INNER JOIN Curso_Alumno_Examen C
+    ON
+    (
+        B.idCurso = C.idCurso
+        AND
+        B.idExamen = C.idExamen
+    )
+    INNER JOIN Alumno D
+    ON
+    (
+        C.idAlumno = D.idAlumno
+    )
+WHERE
+    B.idExamen IN (132, 454)
+    AND
+    C.nota < 6
+ORDER BY
+    A.idCurso, 
+    D.apellido,
+    D.nombre;
+
+SELECT DISTINCT
+    A.denominacion 'Curso', 
+    D.apellido     'Apellido',
+    D.nombre       'Nombre'
+FROM 
+    Curso A
+    INNER JOIN Curso_Examen B
+    ON
+    (
+        A.idCurso = B.idCurso
+    )
+    INNER JOIN Curso_Alumno_Examen C
+    ON
+    (
+        B.idCurso = C.idCurso
+        AND
+        B.idExamen = C.idExamen
+    )
+    INNER JOIN Alumno D
+    ON
+    (
+        C.idAlumno = D.idAlumno
+    )
+WHERE
+    B.idExamen IN (132, 454)
+    AND
+    C.nota < 6
+ORDER BY
+    A.denominacion, 
+    D.apellido,
+    D.nombre;
+
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+/* Informar de cada curso la cantidad de alumnos desaprobados en el primer parcial (Sistemas y Organizaciones, e Investigacion Operativa) */
+/*----------------------------------------------------------------------------------------------------------------------------------------*/
+SELECT 
+    A.idCurso 'Curso',
+    COUNT(*)  'Alumnos Desaprobados'
+FROM 
+    Curso A
+    INNER JOIN Curso_Examen B
+    ON
+    (
+        A.idCurso = B.idCurso
+    )
+    INNER JOIN Curso_Alumno_Examen C
+    ON
+    (
+        B.idCurso = C.idCurso
+        AND
+        B.idExamen = C.idExamen
+    )
+    INNER JOIN Alumno D
+    ON
+    (
+        C.idAlumno = D.idAlumno
+    )
+WHERE
+    B.idExamen IN (132, 454)
+    AND
+    C.nota < 6
+GROUP BY 
+    A.idCurso
+ORDER BY
+    A.idCurso;
+
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Informar de cada curso la cantidad de alumnos desaprobados en el primer parcial (para Sistemas y Organizaciones, y para Investigacion Operativa). Si la cantidad de alumno es superior a 1 (uno) */
+/*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+SELECT 
+    A.idCurso 'Curso',
+    COUNT(*)  'Alumnos Desaprobados'
+FROM 
+    Curso A
+    INNER JOIN Curso_Examen B
+    ON
+    (
+        A.idCurso = B.idCurso
+    )
+    INNER JOIN Curso_Alumno_Examen C
+    ON
+    (
+        B.idCurso = C.idCurso
+        AND
+        B.idExamen = C.idExamen
+    )
+    INNER JOIN Alumno D
+    ON
+    (
+        C.idAlumno = D.idAlumno
+    )
+WHERE
+    B.idExamen IN (132, 454)
+    AND
+    C.nota < 6
+GROUP BY 
+    A.idCurso
+HAVING 
+    COUNT(*) > 1
+ORDER BY
+    A.idCurso;
+
+/*-----------------------------------------------------------------------------*/
+/* Obtener la cantidad de alumnos desaprobados en algunos de los dos parciales */
+/*-----------------------------------------------------------------------------*/
+SELECT
+    A.idCurso 'Curso',
+    COUNT(*)  'Alumnos Desaprobados'
+FROM
+    (
+        SELECT
+            C.idCurso, 
+            C.idAlumno
+        FROM
+            Curso A
+            INNER JOIN Curso_Examen B
+            ON
+            (
+                A.idCurso = B.idCurso
+            )
+            INNER JOIN Curso_Alumno_Examen C
+            ON
+            (
+                B.idCurso = C.idCurso
+                AND
+                B.idExamen = C.idExamen
+            )
+            INNER JOIN Examen D 
+            ON
+            (
+                B.idExamen = D.idExamen
+            )
+        WHERE
+            C.nota < 6
+            AND
+            D.tema IS NOT NULL
+            AND
+            D.descripcion = 'Primer Parcial'
+        UNION
+        SELECT
+            C.idCurso, 
+            C.idAlumno
+        FROM
+            Curso A
+            INNER JOIN Curso_Examen B
+            ON
+            (
+                A.idCurso = B.idCurso
+            )
+            INNER JOIN Curso_Alumno_Examen C
+            ON
+            (
+                B.idCurso = C.idCurso
+                AND
+                B.idExamen = C.idExamen
+            )
+            INNER JOIN Examen D 
+            ON
+            (
+                B.idExamen = D.idExamen
+            )
+        WHERE
+            C.nota < 6
+            AND
+            D.tema IS NOT NULL
+            AND
+            D.descripcion = 'Segundo Parcial'    
+	) A
+GROUP BY
+    A.idCurso
+ORDER BY
+    A.idCurso;

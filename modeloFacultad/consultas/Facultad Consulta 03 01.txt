@@ -1,0 +1,22 @@
+
+USE Facultad;
+
+SELECT
+    A.idCurso 'Curso',
+    A.apellido 'Apellido',
+    A.nombre 'Nombre',
+    A.idExamen 'Examen',
+    A.nota 'Nota'
+FROM 
+    Alumno A
+WHERE
+    A.nota < 6
+    AND
+    A.idExamen IN (454)
+    AND
+    A.idCurso IN (425, 441, 465)
+ORDER BY
+    A.idCurso,
+    A.apellido,   
+    A.nombre,
+	A.idExamen;
